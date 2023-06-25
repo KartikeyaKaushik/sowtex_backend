@@ -8,9 +8,24 @@ dotenv.config({path:'./config.env'})
 var cookieParser = require('cookie-parser');
 let mysql = require('./db/mysql_connection.js').connection;
 
+const _dirname = path.dirname("");
+const buildPath = path.join(_dirname,"../sowtex_frontend/build");
+server.use(exp.static(buildPath));
+
 server.use(cookieParser());
 server.use(exp.static('../frontend/src/assets'));
 server.use('/upload', exp.static('../frontend/public/uploads'));
+
+server.get('/*', function(req, res){
+    res.sendFile(
+        path.join(__dirname,"../sowtex_frontend/build/index.html"),
+        function(err){
+            if(err){
+                res.status(500).send(err);
+            }
+        }
+    )
+})
 
 // mysql APIs
 rout.post('/user', async (req, res)=>{
